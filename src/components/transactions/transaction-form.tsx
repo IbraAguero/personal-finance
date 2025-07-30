@@ -15,21 +15,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Button } from "./ui/button";
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Textarea } from "./ui/textarea";
-import { ScrollArea } from "./ui/scroll-area";
+import { Textarea } from "../ui/textarea";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   TransactionFormData,
   transactionSchema,
@@ -57,7 +57,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
-      type: "INCOME",
+      type: "income",
       amount: undefined,
       category: "",
       description: "",
@@ -67,8 +67,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
 
   const watchedType = form.watch("type");
 
-  const avaliableCategories =
-    categories[watchedType.toLowerCase() as "income" | "expense"] || [];
+  const avaliableCategories = categories[watchedType] || [];
 
   useEffect(() => {
     form.setValue("category", "");
@@ -109,12 +108,12 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                     <FormControl>
                       <RadioGroup
                         className="mt-2"
-                        defaultValue="INCOME"
+                        defaultValue="income"
                         onValueChange={field.onChange}
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="INCOME" />
+                            <RadioGroupItem value="income" />
                           </FormControl>
                           <FormLabel className="text-green-400 font-medium cursor-pointer">
                             Ingreso
@@ -122,7 +121,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="EXPENSE" />
+                            <RadioGroupItem value="expense" />
                           </FormControl>
                           <FormLabel className="text-red-400 font-medium cursor-pointer">
                             Gasto
@@ -181,7 +180,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                     </Select>
                     <FormDescription>
                       Clasifica tus{" "}
-                      {watchedType === "INCOME" ? "ingresos" : "gastos"}
+                      {watchedType === "income" ? "ingresos" : "gastos"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

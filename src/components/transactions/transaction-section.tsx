@@ -1,10 +1,10 @@
 "use client";
-import TransactionList from "../transaction-list";
+import TransactionList from "./transaction-list";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { TransactionWithCategory } from "@/interface/transaction-interface";
-import TransactionForm from "../transaction-form";
+import TransactionForm from "./transaction-form";
 import { Category } from "@prisma/client";
 import { addTransaction } from "@/actions/transactions-actions";
 import { TransactionFormData } from "@/schemas/transaction-schema";
@@ -42,7 +42,7 @@ function TransactionSection({ transactions, categories }: Props) {
         onSubmit={onSubmit}
         categories={categories}
       />
-      <TransactionList transactions={transactions} />
+      <TransactionList transactions={transactions} categories={categories} />
     </section>
   );
 }
