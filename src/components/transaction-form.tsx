@@ -26,55 +26,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import z from "zod";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "./ui/textarea";
 import { ScrollArea } from "./ui/scroll-area";
-
-const transactionSchema = z.object({
-  type: z.enum(["income", "expense"]),
-  amount: z
-    .string({ error: "El monto es requerido" })
-    .min(1, "El monto es requerido")
-    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "El monto debe ser mayor a 0",
-    }),
-  category: z.string().min(1, "La categoria es requerida"),
-  description: z
-    .string()
-    .min(3, "La descripción debe tener al menos 3 caracteres")
-    .max(200, "La descripción no puede exceder 200 caracteres"),
-  date: z.string().min(1, "La fecha es requerida"),
-});
-
-export type TransactionFormData = z.infer<typeof transactionSchema>;
+import {
+  TransactionFormData,
+  transactionSchema,
+} from "@/schemas/transaction-schema";
+import { Category } from "@prisma/client";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   categories: {
-    income: string[];
-    expense: string[];
+    income: Category[];
+    expense: Category[];
   };
   onSubmit: (transaction: TransactionFormData) => void;
 }
 
 function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
+  const today = new Date();
+  const localDate = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
+
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
-      type: "income",
+      type: "INCOME",
       amount: undefined,
       category: "",
       description: "",
-      date: new Date().toISOString().split("T")[0],
+      date: localDate,
     },
   });
 
   const watchedType = form.watch("type");
 
-  const avaliableCategories = categories[watchedType] || [];
+  const avaliableCategories =
+    categories[watchedType.toLowerCase() as "income" | "expense"] || [];
 
   useEffect(() => {
     form.setValue("category", "");
@@ -115,12 +109,12 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                     <FormControl>
                       <RadioGroup
                         className="mt-2"
-                        defaultValue={field.value}
+                        defaultValue="INCOME"
                         onValueChange={field.onChange}
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="income" />
+                            <RadioGroupItem value="INCOME" />
                           </FormControl>
                           <FormLabel className="text-green-400 font-medium cursor-pointer">
                             Ingreso
@@ -128,7 +122,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="expense" />
+                            <RadioGroupItem value="EXPENSE" />
                           </FormControl>
                           <FormLabel className="text-red-400 font-medium cursor-pointer">
                             Gasto
@@ -178,16 +172,16 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {avaliableCategories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
+                        {avaliableCategories.map((category: Category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <FormDescription>
                       Clasifica tus{" "}
-                      {watchedType === "income" ? "ingresos" : "gastos"}
+                      {watchedType === "INCOME" ? "ingresos" : "gastos"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

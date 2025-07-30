@@ -1,11 +1,11 @@
-import { Transaction } from "@/app/page";
 import { Badge } from "./ui/badge";
 import clsx from "clsx";
 import { Button } from "./ui/button";
 import { Trash } from "lucide-react";
+import { TransactionWithCategory } from "@/interface/transaction-interface";
 
 interface Props {
-  transactions: Transaction[];
+  transactions: TransactionWithCategory[];
 }
 
 function TransactionList({ transactions }: Props) {
@@ -27,12 +27,12 @@ function TransactionList({ transactions }: Props) {
               <div className="flex items-center gap-2">
                 <Badge
                   variant={
-                    transaction.type === "income" ? "default" : "destructive"
+                    transaction.type === "INCOME" ? "default" : "destructive"
                   }
                 >
-                  {transaction.type === "income" ? "Ingreso" : "Gasto"}
+                  {transaction.type === "INCOME" ? "Ingreso" : "Gasto"}
                 </Badge>
-                <span className="font-medium">{transaction.category}</span>
+                <span className="font-medium">{transaction.category.name}</span>
                 <span className="text-muted-foreground">
                   {new Date(transaction.date).toLocaleDateString("es-Es", {
                     year: "numeric",
@@ -46,11 +46,11 @@ function TransactionList({ transactions }: Props) {
             <div className="flex items-center gap-1">
               <span
                 className={clsx("font-bold text-lg", {
-                  "text-green-500": transaction.type === "income",
-                  "text-red-500": transaction.type === "expense",
+                  "text-green-500": transaction.type === "INCOME",
+                  "text-red-500": transaction.type === "EXPENSE",
                 })}
               >
-                {transaction.type === "income" ? "+" : "-"}$
+                {transaction.type === "INCOME" ? "+" : "-"}$
                 {transaction.amount.toLocaleString()}
               </span>
               <Button

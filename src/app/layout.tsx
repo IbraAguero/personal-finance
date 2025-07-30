@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "Una aplicacion para controlar tus ingresos y gastos",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
