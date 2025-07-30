@@ -23,8 +23,8 @@ export const getAllTransactions = async () => {
 export const getCategories = async () => {
   try {
     const categories = await db.category.findMany();
-    const expense = categories.filter((cat) => cat.type === "EXPENSE");
-    const income = categories.filter((cat) => cat.type === "INCOME");
+    const expense = categories.filter((cat) => cat.type === "expense");
+    const income = categories.filter((cat) => cat.type === "income");
 
     return { expense, income };
   } catch (error) {

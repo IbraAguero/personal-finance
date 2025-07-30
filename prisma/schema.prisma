@@ -15,9 +15,9 @@ datasource db {
 }
 
 enum TransactionType {
-  INCOME
-  EXPENSE
-  TRANSFER
+  income
+  expense
+  transfer
 }
 
 model Transaction {

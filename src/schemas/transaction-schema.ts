@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const transactionSchema = z.object({
-  type: z.enum(["INCOME", "EXPENSE"]),
+  type: z.enum(["income", "expense"]),
   amount: z
     .string({ error: "El monto es requerido" })
     .min(1, "El monto es requerido")
