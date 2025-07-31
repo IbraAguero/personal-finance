@@ -8,6 +8,7 @@ import TransactionForm from "./transaction-form";
 import { Category } from "@prisma/client";
 import { addTransaction } from "@/actions/transactions-actions";
 import { TransactionFormData } from "@/schemas/transaction-schema";
+import TransactionCards from "./transaction-cards";
 
 interface Props {
   transactions: TransactionWithCategory[];
@@ -21,6 +22,15 @@ function TransactionSection({ transactions, categories }: Props) {
     addTransaction(values);
     setShowForm(false);
   };
+
+  const totalExpense = transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + t.amount, 0);
+  const totalIncome = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance = totalIncome - totalExpense;
 
   return (
     <section className="max-w-5xl mx-auto p-4 space-y-6">
@@ -36,6 +46,12 @@ function TransactionSection({ transactions, categories }: Props) {
           Nueva transaccion
         </Button>
       </div>
+      <TransactionCards
+        balance={balance}
+        totalExpense={totalExpense}
+        totalIncome={totalIncome}
+        totalTransactions={transactions.length}
+      />
       <TransactionForm
         isOpen={showForm}
         onClose={() => setShowForm(false)}
