@@ -20,19 +20,6 @@ export const getAllTransactions = async () => {
   }
 };
 
-export const getCategories = async () => {
-  try {
-    const categories = await db.category.findMany();
-    const expense = categories.filter((cat) => cat.type === "expense");
-    const income = categories.filter((cat) => cat.type === "income");
-
-    return { expense, income };
-  } catch (error) {
-    console.error(error);
-    return { expense: [], income: [] };
-  }
-};
-
 export const addTransaction = async (values: TransactionFormData) => {
   try {
     const { data, success } = transactionSchema.safeParse(values);
@@ -55,6 +42,16 @@ export const addTransaction = async (values: TransactionFormData) => {
 
     revalidatePath("/");
     return newTransaction;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteTransaction = async (id: string) => {
+  try {
+    await db.transaction.delete({ where: { id } });
+
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
   }
