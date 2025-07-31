@@ -1,7 +1,5 @@
-import {
-  getAllTransactions,
-  getCategories,
-} from "@/actions/transactions-actions";
+import { getCategories } from "@/actions/categories-actions";
+import { getAllTransactions } from "@/actions/transactions-actions";
 import TransactionSection from "@/components/transactions/transaction-section";
 
 export default async function Home() {
