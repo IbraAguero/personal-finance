@@ -2,6 +2,7 @@
 
 import { signIn } from "@/auth";
 import { db } from "@/lib/db";
+import { defaultCategories } from "@/lib/default-categories";
 import {
   LoginValues,
   registerSchema,
@@ -13,7 +14,7 @@ import { AuthError } from "next-auth";
 export const loginAction = async (values: LoginValues) => {
   try {
     await signIn("credentials", {
-      email: values.email,
+      email: values.email.toLowerCase(),
       password: values.password,
       redirect: false,
     });
@@ -53,9 +54,13 @@ export const registerUser = async (values: RegisterValues) => {
       data: { email: email.toLowerCase(), name, password: passwordHash },
     });
 
+    await db.category.createMany({
+      data: defaultCategories.map((cat) => ({ ...cat, userId: user.id })),
+    });
+
     signIn("credentials", {
       email: user.email,
-      password: user.password,
+      password: password,
       redirect: false,
     });
     return { success: true };
