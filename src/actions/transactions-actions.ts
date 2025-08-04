@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import {
   TransactionFormData,
@@ -9,7 +10,14 @@ import { revalidatePath } from "next/cache";
 
 export const getAllTransactions = async () => {
   try {
+    const session = await auth();
+
+    if (!session || !session.user) {
+      return { error: "no autorizado" };
+    }
+
     const transactions = await db.transaction.findMany({
+      where: { userId: session.user.id },
       include: { category: true },
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
     });
@@ -28,6 +36,12 @@ export const addTransaction = async (values: TransactionFormData) => {
       return null;
     }
 
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return { error: "no autorizado" };
+    }
+
     const { type, amount, category, description, date } = data;
 
     const newTransaction = await db.transaction.create({
@@ -37,6 +51,7 @@ export const addTransaction = async (values: TransactionFormData) => {
         categoryId: category,
         description,
         date: new Date(date + "T12:00:00"),
+        userId: session.user.id,
       },
     });
 
@@ -49,7 +64,13 @@ export const addTransaction = async (values: TransactionFormData) => {
 
 export const deleteTransaction = async (id: string) => {
   try {
-    await db.transaction.delete({ where: { id } });
+    const session = await auth();
+
+    if (!session || !session.user) {
+      return { error: "no autorizado" };
+    }
+
+    await db.transaction.delete({ where: { id, userId: session.user.id } });
 
     revalidatePath("/");
   } catch (error) {
