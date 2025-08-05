@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { CategoryFormData, categorySchema } from "@/schemas/category-schema";
+import { revalidatePath } from "next/cache";
 
 export const getCategories = async () => {
   try {
@@ -30,18 +31,36 @@ export const addCategory = async (values: CategoryFormData) => {
     const { data, success } = categorySchema.safeParse(values);
 
     if (!success) {
-      return;
+      return {
+        error: "Datos invalidos",
+      };
     }
 
     const session = await auth();
 
     if (!session || !session.user || !session.user.id) {
-      return { error: "no autorizado" };
+      return { error: "No autorizado" };
+    }
+
+    const findCategory = await db.category.findUnique({
+      where: {
+        name_type_userId: {
+          name: data.name,
+          type: data.type,
+          userId: session.user.id,
+        },
+      },
+    });
+
+    if (findCategory) {
+      return { error: "Ya existe una categoria" };
     }
 
     await db.category.create({ data: { ...data, userId: session.user.id } });
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
+    return { error: "ocurrio un error al agregar la categoria" };
   }
 };
 
