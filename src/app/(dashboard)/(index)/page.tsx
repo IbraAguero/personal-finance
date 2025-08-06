@@ -7,8 +7,8 @@ export default async function Home() {
   const categories = await getCategories();
 
   return (
-    <div>
+    <>
       <TransactionSection transactions={transactions} categories={categories} />
-    </div>
+    </>
   );
 }
