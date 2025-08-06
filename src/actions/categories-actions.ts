@@ -15,6 +15,7 @@ export const getCategories = async () => {
 
     const categories = await db.category.findMany({
       where: { userId: session.user.id },
+      orderBy: { createdAt: "asc" },
     });
     const expense = categories.filter((cat) => cat.type === "expense");
     const income = categories.filter((cat) => cat.type === "income");
@@ -53,7 +54,7 @@ export const addCategory = async (values: CategoryFormData) => {
     });
 
     if (findCategory) {
-      return { error: "Ya existe una categoria" };
+      return { error: "Ya existe una categoria con ese nombre" };
     }
 
     await db.category.create({ data: { ...data, userId: session.user.id } });
@@ -81,8 +82,28 @@ export const deleteCategory = async (id: string) => {
     await db.category.delete({
       where: { id, userId: session.user.id },
     });
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
     return { error: "Error al eliminar la categoría" };
+  }
+};
+
+export const editCategory = async (id: string, values: CategoryFormData) => {
+  try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return { error: "No autorizado" };
+    }
+
+    await db.category.update({
+      where: { id, userId: session.user.id },
+      data: { ...values },
+    });
+    revalidatePath("/");
+  } catch (error) {
+    console.error(error);
+    return { error: "Error al editar la categoría" };
   }
 };
