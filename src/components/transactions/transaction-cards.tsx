@@ -29,7 +29,7 @@ function TransactionCards({
               "text-red-400": balance < 0,
             })}
           >
-            ${balance.toLocaleString()}
+            ${balance.toLocaleString("es-Es", { currency: "ARS" })}
           </div>
           <p className="text-xs text-muted-foreground">
             {balance >= 0 ? "Saldo positivo" : "Saldo negativo"}
@@ -43,7 +43,7 @@ function TransactionCards({
             <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
           <div className="text-2xl font-bold text-green-400">
-            ${totalIncome.toLocaleString()}
+            ${totalIncome.toLocaleString("es-Es", { currency: "ARS" })}
           </div>
           <p className="text-xs text-muted-foreground">Total de ingresos</p>
         </CardContent>
@@ -55,7 +55,7 @@ function TransactionCards({
             <TrendingDown className="w-4 h-4 text-red-400" />
           </div>
           <div className="text-2xl font-bold text-red-400">
-            ${totalExpense.toLocaleString()}
+            ${totalExpense.toLocaleString("es-Es", { currency: "ARS" })}
           </div>
           <p className="text-xs text-muted-foreground">Total de gastos</p>
         </CardContent>
