@@ -14,6 +14,20 @@ interface Props {
 
 function PageWallets({ wallets }: Props) {
   const [showForm, setShowForm] = useState(false);
+  const [walletToEdit, setWalletToEdit] = useState<WalletAndBalance | null>(
+    null
+  );
+
+  const handleAdd = () => {
+    setWalletToEdit(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (wallet: WalletAndBalance) => {
+    setWalletToEdit(wallet);
+    setShowForm(true);
+  };
+
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between gap-2">
@@ -24,13 +38,17 @@ function PageWallets({ wallets }: Props) {
             más.
           </h3>
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        <Button onClick={handleAdd}>
           <Plus /> Agregar cuenta
         </Button>
       </div>
       <div>Balance</div>
-      <WalletList wallets={wallets} />
-      <WalletForm isOpen={showForm} onClose={() => setShowForm(false)} />
+      <WalletList wallets={wallets} onEdit={handleEdit} />
+      <WalletForm
+        isOpen={showForm}
+        wallet={walletToEdit || undefined}
+        onClose={() => setShowForm(false)}
+      />
     </section>
   );
 }

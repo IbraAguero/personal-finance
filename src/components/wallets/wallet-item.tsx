@@ -8,9 +8,10 @@ import { toast } from "sonner";
 
 interface Props {
   wallet: Wallet & { balance: number };
+  onEdit: () => void;
 }
 
-function WalletItem({ wallet }: Props) {
+function WalletItem({ wallet, onEdit }: Props) {
   const handleDelete = async () => {
     const res = await deleteWallet(wallet.id);
     if (res?.error) {
@@ -42,7 +43,7 @@ function WalletItem({ wallet }: Props) {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={onEdit}>
           <Edit />
         </Button>
         <Button

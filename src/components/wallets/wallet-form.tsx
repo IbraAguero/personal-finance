@@ -26,8 +26,8 @@ import {
 import { walletIcons } from "@/lib/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WalletFormData, walletSchema } from "@/schemas/wallet-schema";
-import { useTransition } from "react";
-import { addWallet } from "@/actions/wallet-action";
+import { useEffect, useTransition } from "react";
+import { addWallet, updateWallet } from "@/actions/wallet-action";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Alert, AlertDescription } from "../ui/alert";
@@ -65,13 +65,26 @@ function WalletForm({ isOpen, onClose, wallet }: Props) {
     });
   };
 
+  useEffect(() => {
+    form.reset({
+      name: wallet?.name ?? "",
+      type: wallet?.type ?? undefined,
+    });
+  }, [wallet, form]);
+
+  const isEditMode = Boolean(wallet);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Nueva billetera</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? "Editar billetera" : "Nueva billetera"}
+          </DialogTitle>
           <DialogDescription>
-            Registra una nueva billetera para tener un mejor control.
+            {isEditMode
+              ? "Modifica los datos de tu billetera."
+              : "Registra una nueva billetera para tener un mejor control."}
           </DialogDescription>
         </DialogHeader>
         <Alert>
@@ -133,7 +146,7 @@ function WalletForm({ isOpen, onClose, wallet }: Props) {
                 Cancelar
               </Button>
               <Button isLoading={isPending} type="submit">
-                Agregar
+                {isEditMode ? "Guardar cambios" : "Agregar"}
               </Button>
             </DialogFooter>
           </form>

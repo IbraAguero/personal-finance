@@ -14,9 +14,10 @@ type WalletAndBalance = Wallet & { balance: number };
 
 interface Props {
   wallets: WalletAndBalance[];
+  onEdit: (wallet: WalletAndBalance) => void;
 }
 
-function WalletList({ wallets }: Props) {
+function WalletList({ wallets, onEdit }: Props) {
   const [selectValue, setSelectValue] = useState("all");
 
   const filteredWallets = wallets.filter(
@@ -54,7 +55,11 @@ function WalletList({ wallets }: Props) {
       </div>
       <div className="space-y-2">
         {filteredWallets.map((wallet) => (
-          <WalletItem key={wallet.id} wallet={wallet} />
+          <WalletItem
+            key={wallet.id}
+            wallet={wallet}
+            onEdit={() => onEdit(wallet)}
+          />
         ))}
       </div>
     </div>
