@@ -33,7 +33,7 @@ export const addTransaction = async (values: TransactionFormData) => {
     const { data, success } = transactionSchema.safeParse(values);
 
     if (!success && !data) {
-      return null;
+      return { error: "Datos invalidos" };
     }
 
     const session = await auth();
@@ -42,16 +42,17 @@ export const addTransaction = async (values: TransactionFormData) => {
       return { error: "no autorizado" };
     }
 
-    const { type, amount, category, description, date } = data;
+    const { type, amount, category, description, date, wallet } = data;
 
     const newTransaction = await db.transaction.create({
       data: {
         type,
         amount: Number(amount),
-        categoryId: category,
         description,
-        date: new Date(date + "T12:00:00"),
         userId: session.user.id,
+        walletId: wallet,
+        categoryId: category,
+        date: new Date(date + "T12:00:00"),
       },
     });
 

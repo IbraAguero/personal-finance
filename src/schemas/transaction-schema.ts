@@ -8,7 +8,10 @@ export const transactionSchema = z.object({
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
       message: "El monto debe ser mayor a 0",
     }),
-  category: z.string().min(1, "La categoria es requerida"),
+  wallet: z.uuid("La cuenta no es valida").min(1, "La cuenta es requerida"),
+  category: z
+    .uuid("La categoria no es valida")
+    .min(1, "La categoria es requerida"),
   description: z
     .string()
     .min(3, "La descripción debe tener al menos 3 caracteres")

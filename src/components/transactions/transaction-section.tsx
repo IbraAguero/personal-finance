@@ -1,15 +1,21 @@
 "use client";
 import TransactionList from "./transaction-list";
 import { Button } from "../ui/button";
-import { Plus, Settings } from "lucide-react";
+import { Clipboard, Plus, Settings } from "lucide-react";
 import { useState } from "react";
 import { TransactionWithCategory } from "@/interface/transaction-interface";
 import TransactionForm from "./transaction-form";
-import { Category } from "@prisma/client";
+import { Category, Wallet } from "@prisma/client";
 import { addTransaction } from "@/actions/transactions-actions";
 import { TransactionFormData } from "@/schemas/transaction-schema";
 import TransactionCards from "./transaction-cards";
 import CategoryDialog from "../category/category-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Categories {
   income: Category[];
@@ -19,9 +25,10 @@ interface Categories {
 interface Props {
   transactions: TransactionWithCategory[];
   categories: Categories;
+  wallets: Wallet[];
 }
 
-function TransactionSection({ transactions, categories }: Props) {
+function TransactionSection({ transactions, categories, wallets }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
 
@@ -41,25 +48,38 @@ function TransactionSection({ transactions, categories }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Transacciones</h1>
           <h3 className="text-muted-foreground">
             Gestiona tus ingresos y gastos
           </h3>
         </div>
-        <div className="flex gap-2 flex-col-reverse sm:flex-row">
-          <Button
+        <div className="flex justify-between gap-2 sm:flex-row">
+          {/* <Button
             variant="outline"
             onClick={() => setShowCategoryManager(true)}
           >
             <Settings className="h-4 w-4" />
             Categorias
-          </Button>
+          </Button> */}
           <Button onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4" />
             Nueva transaccion
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Settings /> Gestíon
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setShowCategoryManager(true)}>
+                <Clipboard />
+                Categorias
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <TransactionCards
@@ -73,6 +93,7 @@ function TransactionSection({ transactions, categories }: Props) {
         onClose={() => setShowForm(false)}
         onSubmit={onSubmit}
         categories={categories}
+        wallets={wallets}
       />
       <TransactionList transactions={transactions} categories={categories} />
       <CategoryDialog

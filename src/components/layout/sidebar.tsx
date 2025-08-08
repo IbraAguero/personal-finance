@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 
 const ROUTES = [
   { path: "/", pathname: "Transacciones" },
+  { path: "/billeteras", pathname: "Billeteras" },
   { path: "/configuracion", pathname: "Configuracion" },
 ];
 

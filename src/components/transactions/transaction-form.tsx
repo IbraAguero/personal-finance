@@ -34,11 +34,13 @@ import {
   TransactionFormData,
   transactionSchema,
 } from "@/schemas/transaction-schema";
-import { Category } from "@prisma/client";
+import { Category, Wallet } from "@prisma/client";
+import { walletIcons } from "@/lib/icons";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  wallets: Wallet[];
   categories: {
     income: Category[];
     expense: Category[];
@@ -46,7 +48,13 @@ interface Props {
   onSubmit: (transaction: TransactionFormData) => void;
 }
 
-function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
+function TransactionForm({
+  isOpen,
+  onClose,
+  categories,
+  wallets,
+  onSubmit,
+}: Props) {
   const today = new Date();
   const localDate = new Date(
     today.getTime() - today.getTimezoneOffset() * 60000
@@ -157,6 +165,47 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                   </FormItem>
                 )}
               />
+              {/* ORIGEN/DESTINO DE LA TRANSACCION */}
+              <FormField
+                control={form.control}
+                name="wallet"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Cuenta de{" "}
+                      {watchedType === "income" ? "Destino" : "Origen"}
+                    </FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecciona una cuenta" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {wallets.map((wallet) => {
+                          const { icon: Icon, color } =
+                            walletIcons[wallet.type];
+                          return (
+                            <SelectItem key={wallet.id} value={wallet.id}>
+                              <div className="flex items-center gap-2">
+                                <Icon className={`w-4 h-4 ${color}`} />
+                                <span>{wallet.name}</span>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Cuenta{" "}
+                      {watchedType === "income"
+                        ? "donde ingresara el dinero"
+                        : "de donde se descontara el dinero"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {/* CATEGORIA DE LA TRANSACCION */}
               <FormField
                 control={form.control}
@@ -227,7 +276,7 @@ function TransactionForm({ isOpen, onClose, categories, onSubmit }: Props) {
                 )}
               />
               <DialogFooter>
-                <Button variant="ghost" type="button">
+                <Button variant="ghost" type="button" onClick={onClose}>
                   Cancelar
                 </Button>
                 <Button type="submit">Guardar</Button>
