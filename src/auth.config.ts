@@ -3,10 +3,12 @@ import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "./schemas/auth-schema";
 import { db } from "./lib/db";
 import bcrypt from "bcryptjs";
+import Google from "next-auth/providers/google";
 
 // Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
+    Google,
     Credentials({
       authorize: async (credentials) => {
         const { data, success } = loginSchema.safeParse(credentials);

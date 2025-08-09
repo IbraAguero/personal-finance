@@ -1,20 +1,34 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import authConfig from "./auth.config";
-const { auth: middleware } = NextAuth(authConfig);
 
-const publicRoutes = ["/login", "/register"];
-const apiAuthPrefix = "/api";
+const { auth } = NextAuth(authConfig);
 
-export default middleware((req) => {
-  const { nextUrl, auth } = req;
-  const isLoggedIn = !!auth?.user;
+const publicRoutes = [""];
+const authRoutes = ["/login", "/register"];
+const apiAuthPrefix = "/api/auth";
+
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
 
   if (nextUrl.pathname.startsWith(apiAuthPrefix)) {
     return NextResponse.next();
   }
 
-  if (!publicRoutes.includes(nextUrl.pathname) && !isLoggedIn) {
+  if (publicRoutes.includes(nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
+  if (isLoggedIn && authRoutes.includes(nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/", nextUrl));
+  }
+
+  if (
+    !isLoggedIn &&
+    !authRoutes.includes(nextUrl.pathname) &&
+    !publicRoutes.includes(nextUrl.pathname)
+  ) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 

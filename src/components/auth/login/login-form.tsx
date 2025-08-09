@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/password-input";
+import { Separator } from "@/components/ui/separator";
 import { LoginValues, loginSchema } from "@/schemas/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { error } from "console";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import ButtonGoogle from "../button-google";
 
 function LoginForm() {
   const [isPending, startTransaction] = useTransition();
@@ -72,10 +73,12 @@ function LoginForm() {
             </FormItem>
           )}
         />
-        <ButtonLoader className="w-full" isPending={isPending}>
+        <ButtonLoader className="w-full" isPending={isPending} type="submit">
           Ingresar
         </ButtonLoader>
+        <Separator />
       </form>
+      <ButtonGoogle>Continuar con Google</ButtonGoogle>
     </Form>
   );
 }

@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import ButtonGoogle from "../button-google";
+import { Separator } from "@/components/ui/separator";
 
 function RegisterForm() {
   const [isPending, startTransition] = useTransition();
@@ -85,7 +87,9 @@ function RegisterForm() {
         <ButtonLoader className="w-full" isPending={isPending}>
           Registrarse
         </ButtonLoader>
+        <Separator />
       </form>
+      <ButtonGoogle>Registrarse con Google</ButtonGoogle>
     </Form>
   );
 }

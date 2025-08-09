@@ -6,12 +6,14 @@ function Page() {
   return (
     <section className="w-full min-h-screen grid place-content-center">
       <div className="md:border rounded-lg p-8 px-10 min-w-md">
-        <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
-        <span className="text-muted-foreground">
-          Ingrese sus credenciales para continuar
-        </span>
-        <LoginForm />
         <div className="text-center">
+          <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
+          <span className="text-muted-foreground">
+            Ingrese sus credenciales para continuar
+          </span>
+        </div>
+        <LoginForm />
+        <div className="text-center mt-4">
           <span className="text-muted-foreground">¿No tienes una cuenta?</span>
           <Link href="/register">
             <Button variant="link" className="p-0 ml-1">

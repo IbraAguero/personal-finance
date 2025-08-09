@@ -11,7 +11,7 @@ function Page() {
           Regístrate y empieza a gestionar tus finanzas de manera eficiente
         </span>
         <RegisterForm />
-        <div className="text-center">
+        <div className="text-center mt-4">
           <span className="text-muted-foreground">¿Ya tenes una cuenta?</span>
           <Link href="/login">
             <Button variant="link" className="p-0 ml-1">
