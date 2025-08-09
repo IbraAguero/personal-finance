@@ -263,7 +263,7 @@ function TransactionForm({
                 name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descripcion</FormLabel>
+                    <FormLabel>Fecha</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
