@@ -1,39 +1,48 @@
-import { TransactionWithCategory } from "@/interface/transaction-interface";
+import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
 import TransactionFilters, { Filters } from "./transaction-filters";
-import { useState } from "react";
-import { Category } from "@prisma/client";
+import { useMemo, useState } from "react";
+import { Category, Wallet } from "@prisma/client";
 import TransactionListItem from "./transaction-list-item";
 
 interface Props {
-  transactions: TransactionWithCategory[];
+  transactions: TransactionWithCategoryAndWallet[];
   categories: { expense: Category[]; income: Category[] };
+  wallets: Wallet[];
 }
 
-function TransactionList({ transactions, categories }: Props) {
+function TransactionList({ transactions, categories, wallets }: Props) {
   const [filters, setFilters] = useState<Filters>({
     search: "",
     type: "all",
     category: "all",
+    wallet: "all",
   });
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    const matchesSearch =
-      transaction.category.name
-        .toLowerCase()
-        .includes(filters.search.toLowerCase()) ||
-      transaction.description
-        ?.toLowerCase()
-        .includes(filters.search.toLowerCase());
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((transaction) => {
+      const searchTerm = filters.search.toLowerCase();
+      const desc = transaction.description?.toLowerCase() ?? "";
+      const categoryName = transaction.category.name.toLowerCase();
 
-    const matchesType =
-      filters.type === "all" || transaction.type === filters.type;
+      const matchesSearch =
+        categoryName.includes(searchTerm) || desc.includes(searchTerm);
 
-    const matchesCategory =
-      filters.category === "all" ||
-      transaction.category.id === filters.category;
+      const matchesType =
+        filters.type === "all" || transaction.type === filters.type;
 
-    return matchesSearch && matchesType && matchesCategory;
-  });
+      const matchesCategory =
+        filters.category === "all" ||
+        transaction.category.id === filters.category;
+
+      const matchesWallet =
+        filters.wallet === "all" || transaction.walletId === filters.wallet;
+
+      return matchesSearch && matchesType && matchesCategory && matchesWallet;
+    });
+  }, [transactions, filters]);
+
+  const noTransactions = transactions.length === 0;
+  const noResults = !noTransactions && filteredTransactions.length === 0;
 
   return (
     <div className="space-y-4">
@@ -46,14 +55,32 @@ function TransactionList({ transactions, categories }: Props) {
       <div>
         <TransactionFilters
           filters={filters}
-          onChange={setFilters}
+          wallets={wallets}
           categories={categories}
+          onChange={setFilters}
         />
       </div>
-      <div className="space-y-4">
-        {filteredTransactions.map((transaction) => (
-          <TransactionListItem key={transaction.id} transaction={transaction} />
-        ))}
+      <div className="space-y-2">
+        {noTransactions && (
+          <div className="flex justify-center mt-20 font-medium text-lg">
+            No hay transacciones registradas
+          </div>
+        )}
+
+        {noResults && (
+          <div className="flex justify-center mt-20 font-medium text-lg">
+            No hay resultados que coincidan con la búsqueda o filtros aplicados
+          </div>
+        )}
+
+        {!noTransactions &&
+          !noResults &&
+          filteredTransactions.map((transaction) => (
+            <TransactionListItem
+              key={transaction.id}
+              transaction={transaction}
+            />
+          ))}
       </div>
     </div>
   );

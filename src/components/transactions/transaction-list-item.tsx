@@ -1,6 +1,6 @@
 import { Trash } from "lucide-react";
 import { Button } from "../ui/button";
-import { TransactionWithCategory } from "@/interface/transaction-interface";
+import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import clsx from "clsx";
@@ -8,7 +8,7 @@ import { Badge } from "../ui/badge";
 import { deleteTransaction } from "@/actions/transactions-actions";
 
 interface Props {
-  transaction: TransactionWithCategory;
+  transaction: TransactionWithCategoryAndWallet;
 }
 
 function TransactionListItem({ transaction }: Props) {
@@ -29,13 +29,15 @@ function TransactionListItem({ transaction }: Props) {
             {transaction.type === "income" ? "Ingreso" : "Gasto"}
           </Badge>
           <span className="font-medium">{transaction.category.name}</span>
-          <span className="text-muted-foreground">
-            {format(new Date(transaction.date), "d MMM yyyy", {
-              locale: es,
-            })}
-          </span>
         </div>
         <p className="text-muted-foreground">{transaction.description}</p>
+        <span className="text-sm text-muted-foreground">
+          {format(new Date(transaction.date), "d MMM yyyy", {
+            locale: es,
+          })}
+          {" • "}
+          {transaction.wallet.name}
+        </span>
       </div>
       <div className="flex items-center gap-1">
         <span

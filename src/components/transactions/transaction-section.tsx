@@ -3,7 +3,7 @@ import TransactionList from "./transaction-list";
 import { Button } from "../ui/button";
 import { Clipboard, Plus, Settings } from "lucide-react";
 import { useState } from "react";
-import { TransactionWithCategory } from "@/interface/transaction-interface";
+import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
 import TransactionForm from "./transaction-form";
 import { Category, Wallet } from "@prisma/client";
 import { addTransaction } from "@/actions/transactions-actions";
@@ -23,7 +23,7 @@ interface Categories {
 }
 
 interface Props {
-  transactions: TransactionWithCategory[];
+  transactions: TransactionWithCategoryAndWallet[];
   categories: Categories;
   wallets: Wallet[];
 }
@@ -95,7 +95,11 @@ function TransactionSection({ transactions, categories, wallets }: Props) {
         categories={categories}
         wallets={wallets}
       />
-      <TransactionList transactions={transactions} categories={categories} />
+      <TransactionList
+        transactions={transactions}
+        categories={categories}
+        wallets={wallets}
+      />
       <CategoryDialog
         isOpen={showCategoryManager}
         onClose={setShowCategoryManager}

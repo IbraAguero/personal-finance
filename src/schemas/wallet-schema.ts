@@ -1,3 +1,4 @@
+import { Wallet } from "@prisma/client";
 import z from "zod";
 
 export const walletSchema = z.object({
@@ -8,3 +9,4 @@ export const walletSchema = z.object({
 });
 
 export type WalletFormData = z.infer<typeof walletSchema>;
+export type WalletAndBalance = Wallet & { balance: number };
