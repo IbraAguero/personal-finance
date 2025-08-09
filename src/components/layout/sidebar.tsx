@@ -13,6 +13,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import ButtonLogout from "../auth/button-logout";
 
 const ROUTES = [
   { path: "/", pathname: "Transacciones" },
@@ -35,7 +36,7 @@ function Sidebar() {
           <MenuIcon />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-72 pl-6">
+      <SheetContent className="w-72 px-6 pb-6">
         <SheetHeader className="pl-0">
           <SheetTitle>
             <Link
@@ -48,21 +49,24 @@ function Sidebar() {
           </SheetTitle>
           <SheetDescription />
         </SheetHeader>
-        <ul className="space-y-5">
-          {ROUTES.map((route) => (
-            <li key={route.path}>
-              <Link
-                href={route.path}
-                className={clsx(
-                  "text-lg text-muted-foreground hover:text-primary/80 transition-colors",
-                  { "text-primary/100": route.path === path }
-                )}
-              >
-                {route.pathname}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-col justify-between h-full">
+          <ul className="space-y-5 flex-1">
+            {ROUTES.map((route) => (
+              <li key={route.path}>
+                <Link
+                  href={route.path}
+                  className={clsx(
+                    "text-lg text-muted-foreground hover:text-primary/80 transition-colors",
+                    { "text-primary/100": route.path === path }
+                  )}
+                >
+                  {route.pathname}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <ButtonLogout />
+        </div>
       </SheetContent>
     </Sheet>
   );
