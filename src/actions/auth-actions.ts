@@ -2,6 +2,7 @@
 
 import { signIn } from "@/auth";
 import { db } from "@/lib/db";
+import { defaultWallets } from "@/lib/deafult-wallets";
 import { defaultCategories } from "@/lib/default-categories";
 import {
   LoginValues,
@@ -40,7 +41,9 @@ export const registerUser = async (values: RegisterValues) => {
 
     const { email, name, password } = data;
 
-    const findUser = await db.user.findUnique({ where: { email } });
+    const findUser = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
     if (findUser) {
       return {
         sucess: false,
@@ -58,11 +61,11 @@ export const registerUser = async (values: RegisterValues) => {
       data: defaultCategories.map((cat) => ({ ...cat, userId: user.id })),
     });
 
-    signIn("credentials", {
-      email: user.email,
-      password: password,
-      redirect: false,
+    await db.wallet.createMany({
+      data: defaultWallets.map((wallet) => ({ ...wallet, userId: user.id })),
     });
+
+    await loginAction({ email: email.toLowerCase(), password });
     return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
