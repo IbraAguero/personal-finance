@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "App - Control de gastos",
+  title: "Mis Finanzas - Control de gastos",
   description: "Una aplicacion para controlar tus ingresos y gastos",
 };
 
