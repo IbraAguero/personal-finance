@@ -1,3 +1,5 @@
-import { Transaction, Category } from "@prisma/client";
+import { Transaction, Category, Wallet } from "@prisma/client";
 
-export type TransactionWithCategory = Transaction & { category: Category };
+export type TransactionWithCategoryAndWallet = Transaction & {
+  category: Category;
+} & { wallet: Wallet };
