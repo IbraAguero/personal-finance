@@ -1,3 +1,4 @@
+import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 
 export default async function Layout({
@@ -6,7 +7,8 @@ export default async function Layout({
   return (
     <>
       <Navbar />
-      <section className="max-w-6xl mx-auto p-4">{children}</section>
+      <section className="max-w-6xl mx-auto p-4 pb-20">{children}</section>
+      <Footer />
     </>
   );
 }
