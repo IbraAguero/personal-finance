@@ -95,12 +95,14 @@ model Transaction {
   description String?
   date DateTime
 
-  categoryId String
+  categoryId String?
   userId String
   walletId String
 
+  transferId String?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
   wallet  Wallet @relation(fields: [walletId], references: [id])
 
   createdAt   DateTime  @default(now())

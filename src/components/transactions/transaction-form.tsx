@@ -67,7 +67,9 @@ function TransactionForm({
     defaultValues: {
       type: "income",
       amount: undefined,
-      category: "",
+      category: undefined,
+      wallet: undefined,
+      toWallet: undefined,
       description: "",
       date: localDate,
     },
@@ -75,10 +77,20 @@ function TransactionForm({
 
   const watchedType = form.watch("type");
 
-  const avaliableCategories = categories[watchedType] || [];
+  const avaliableCategories =
+    watchedType === "transfer" ? [] : categories[watchedType] || [];
 
   useEffect(() => {
-    form.setValue("category", "");
+    if (watchedType === "transfer") {
+      form.setValue("category", undefined, { shouldValidate: true });
+    } else {
+      form.setValue("toWallet", undefined, { shouldValidate: true });
+      if (!form.getValues("category")) {
+        form.setValue("category", undefined, { shouldValidate: true });
+      }
+      form.clearErrors("category");
+      form.clearErrors("toWallet");
+    }
   }, [watchedType, form]);
 
   useEffect(() => {
@@ -86,7 +98,6 @@ function TransactionForm({
   }, [isOpen, form]);
 
   const handleSubmit = (values: TransactionFormData) => {
-    console.log(values);
     onSubmit(values);
     form.reset();
   };
@@ -97,7 +108,8 @@ function TransactionForm({
         <DialogHeader className="px-6 pt-6">
           <DialogTitle>Nueva transaccion</DialogTitle>
           <DialogDescription>
-            Registra un nuevo ingreso o gasto en tu control financiero.
+            Registra un nuevo ingreso, gasto o transferencia en tu control
+            financiero.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[60vh] px-6 pb-6">
@@ -135,6 +147,14 @@ function TransactionForm({
                             Gasto
                           </FormLabel>
                         </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="transfer" />
+                          </FormControl>
+                          <FormLabel className="text-blue-400 font-medium cursor-pointer">
+                            Transferencia
+                          </FormLabel>
+                        </FormItem>
                       </RadioGroup>
                     </FormControl>
 
@@ -142,6 +162,7 @@ function TransactionForm({
                   </FormItem>
                 )}
               />
+
               {/* MONTO DE LA TRANSACCION */}
               <FormField
                 control={form.control}
@@ -152,6 +173,7 @@ function TransactionForm({
                     <FormControl>
                       <Input
                         type="number"
+                        min={0}
                         step={0.01}
                         placeholder="0.00"
                         {...field}
@@ -165,6 +187,7 @@ function TransactionForm({
                   </FormItem>
                 )}
               />
+
               {/* ORIGEN/DESTINO DE LA TRANSACCION */}
               <FormField
                 control={form.control}
@@ -172,8 +195,7 @@ function TransactionForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Cuenta de{" "}
-                      {watchedType === "income" ? "Destino" : "Origen"}
+                      Cuenta {watchedType === "income" ? "Destino" : "Origen"}
                     </FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
@@ -206,35 +228,80 @@ function TransactionForm({
                   </FormItem>
                 )}
               />
+              {watchedType === "transfer" && (
+                <FormField
+                  control={form.control}
+                  name="toWallet"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cuenta Destino</FormLabel>
+                      <Select
+                        value={field.value || undefined}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona una cuenta" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {wallets.map((wallet) => {
+                            const { icon: Icon, color } =
+                              walletIcons[wallet.type];
+                            return (
+                              <SelectItem key={wallet.id} value={wallet.id}>
+                                <div className="flex items-center gap-2">
+                                  <Icon className={`w-4 h-4 ${color}`} />
+                                  <span>{wallet.name}</span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Cuenta donde ingresara el dinero
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               {/* CATEGORIA DE LA TRANSACCION */}
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categoria</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecciona una categoria" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {avaliableCategories.map((category: Category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Clasifica tus{" "}
-                      {watchedType === "income" ? "ingresos" : "gastos"}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {watchedType !== "transfer" && (
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categoria</FormLabel>
+                      <Select
+                        value={field.value || undefined}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona una categoria" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {avaliableCategories.map((category: Category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Clasifica tus{" "}
+                        {watchedType === "income" ? "ingresos" : "gastos"}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               {/* DESCRIPCION DE LA TRANSACCION */}
               <FormField
                 control={form.control}

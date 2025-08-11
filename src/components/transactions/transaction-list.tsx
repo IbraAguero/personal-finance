@@ -22,7 +22,10 @@ function TransactionList({ transactions, categories, wallets }: Props) {
     return transactions.filter((transaction) => {
       const searchTerm = filters.search.toLowerCase();
       const desc = transaction.description?.toLowerCase() ?? "";
-      const categoryName = transaction.category.name.toLowerCase();
+
+      const categoryName = transaction.transferId
+        ? "transferencia"
+        : transaction.category?.name?.toLowerCase() ?? "";
 
       const matchesSearch =
         categoryName.includes(searchTerm) || desc.includes(searchTerm);
@@ -30,9 +33,10 @@ function TransactionList({ transactions, categories, wallets }: Props) {
       const matchesType =
         filters.type === "all" || transaction.type === filters.type;
 
-      const matchesCategory =
-        filters.category === "all" ||
-        transaction.category.id === filters.category;
+      const matchesCategory = transaction.transferId
+        ? filters.category === "all"
+        : filters.category === "all" ||
+          transaction.category?.id === filters.category;
 
       const matchesWallet =
         filters.wallet === "all" || transaction.walletId === filters.wallet;

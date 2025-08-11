@@ -8,13 +8,18 @@ import { Badge } from "../ui/badge";
 import { deleteTransaction } from "@/actions/transactions-actions";
 
 interface Props {
-  transaction: TransactionWithCategoryAndWallet;
+  transaction: TransactionWithCategoryAndWallet & {
+    fromWallet?: { id: string; name: string };
+    toWallet?: { id: string; name: string };
+  };
 }
 
 function TransactionListItem({ transaction }: Props) {
   const handleDelete = async () => {
     await deleteTransaction(transaction.id);
   };
+
+  const isTransfer = Boolean(transaction.transferId);
 
   return (
     <div
@@ -23,22 +28,35 @@ function TransactionListItem({ transaction }: Props) {
     >
       <div className="flex-1 space-y-1">
         <div className="flex items-center gap-2">
-          <Badge
-            variant={transaction.type === "income" ? "default" : "destructive"}
-          >
-            {transaction.type === "income" ? "Ingreso" : "Gasto"}
-          </Badge>
-          <span className="font-medium">{transaction.category.name}</span>
+          {isTransfer ? (
+            <Badge variant="secondary">Transferencia</Badge>
+          ) : (
+            <Badge
+              variant={
+                transaction.type === "income" ? "default" : "destructive"
+              }
+            >
+              {transaction.type === "income" ? "Ingreso" : "Gasto"}
+            </Badge>
+          )}
+
+          {!isTransfer ? (
+            <span className="font-medium">{transaction.category?.name}</span>
+          ) : (
+            <span className="font-medium">
+              {transaction.fromWallet?.name} → {transaction.toWallet?.name}
+            </span>
+          )}
         </div>
+
         <p className="text-muted-foreground">{transaction.description}</p>
+
         <span className="text-sm text-muted-foreground">
-          {format(new Date(transaction.date), "d MMM yyyy", {
-            locale: es,
-          })}
-          {" • "}
-          {transaction.wallet.name}
+          {format(new Date(transaction.date), "d MMM yyyy", { locale: es })}
+          {transaction.wallet?.name && ` • ${transaction.wallet?.name}`}
         </span>
       </div>
+
       <div className="flex items-center gap-1">
         <span
           className={clsx("font-bold text-lg", {
@@ -46,15 +64,14 @@ function TransactionListItem({ transaction }: Props) {
             "text-red-500": transaction.type === "expense",
           })}
         >
-          {transaction.type === "income" ? "+" : "-"}$
-          {transaction.amount.toLocaleString("es-Es", {
-            currency: "ARS",
-          })}
+          {isTransfer ? "" : transaction.type === "income" ? "+" : "-"}$
+          {transaction.amount.toLocaleString("es-ES", { currency: "ARS" })}
         </span>
+
         <Button
           variant="ghost"
           size="icon"
-          className="text-red-500 hover:text-red-70 "
+          className="text-red-500 hover:text-red-700"
           onClick={handleDelete}
         >
           <Trash className="w-4 h-4" />
@@ -63,4 +80,5 @@ function TransactionListItem({ transaction }: Props) {
     </div>
   );
 }
+
 export default TransactionListItem;
