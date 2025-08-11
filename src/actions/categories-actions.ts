@@ -10,7 +10,7 @@ export const getCategories = async () => {
     const session = await auth();
 
     if (!session || !session.user || !session.user.id) {
-      return { error: "no autorizado" };
+      return { error: "no autorizado", expense: [], income: [] };
     }
 
     const categories = await db.category.findMany({
@@ -23,7 +23,11 @@ export const getCategories = async () => {
     return { expense, income };
   } catch (error) {
     console.error(error);
-    return { expense: [], income: [] };
+    return {
+      error: "Ocurrio un error al obtener las categorias",
+      expense: [],
+      income: [],
+    };
   }
 };
 

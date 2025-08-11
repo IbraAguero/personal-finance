@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 
 export const getAllTransactions = async () => {
   const session = await auth();
-  if (!session?.user?.id) return { error: "no autorizado" };
+  if (!session?.user?.id) return { error: "no autorizado", data: [] };
 
   const transactions = await db.transaction.findMany({
     where: { userId: session.user.id },
@@ -48,7 +48,7 @@ export const getAllTransactions = async () => {
     }
   }
 
-  return grouped;
+  return { data: grouped };
 };
 
 export const addTransaction = async (values: TransactionFormData) => {
