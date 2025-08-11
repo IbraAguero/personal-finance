@@ -3,7 +3,7 @@ import TransactionList from "./transaction-list";
 import { Button } from "../ui/button";
 import { Clipboard, Plus, Settings } from "lucide-react";
 import { useState } from "react";
-import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
+import { GroupedTransaction } from "@/interface/transaction-interface";
 import TransactionForm from "./transaction-form";
 import { Category, Wallet } from "@prisma/client";
 import { addTransaction } from "@/actions/transactions-actions";
@@ -23,7 +23,7 @@ interface Categories {
 }
 
 interface Props {
-  transactions: TransactionWithCategoryAndWallet[];
+  transactions: GroupedTransaction[];
   categories: Categories;
   wallets: Wallet[];
 }

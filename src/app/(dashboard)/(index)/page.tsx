@@ -4,7 +4,7 @@ import { getWallets } from "@/actions/wallet-action";
 import TransactionSection from "@/components/transactions/transaction-section";
 
 export default async function Home() {
-  const transactions = await getAllTransactions();
+  const { data: transactions } = await getAllTransactions();
   const categories = await getCategories();
   const { data: wallets } = await getWallets();
 

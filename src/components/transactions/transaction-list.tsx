@@ -1,11 +1,11 @@
-import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
+import { GroupedTransaction } from "@/interface/transaction-interface";
 import TransactionFilters, { Filters } from "./transaction-filters";
 import { useMemo, useState } from "react";
 import { Category, Wallet } from "@prisma/client";
 import TransactionListItem from "./transaction-list-item";
 
 interface Props {
-  transactions: TransactionWithCategoryAndWallet[];
+  transactions: GroupedTransaction[];
   categories: { expense: Category[]; income: Category[] };
   wallets: Wallet[];
 }
@@ -23,9 +23,10 @@ function TransactionList({ transactions, categories, wallets }: Props) {
       const searchTerm = filters.search.toLowerCase();
       const desc = transaction.description?.toLowerCase() ?? "";
 
-      const categoryName = transaction.transferId
-        ? "transferencia"
-        : transaction.category?.name?.toLowerCase() ?? "";
+      const categoryName =
+        "category" in transaction
+          ? transaction.category?.name?.toLowerCase() ?? ""
+          : "transferencia";
 
       const matchesSearch =
         categoryName.includes(searchTerm) || desc.includes(searchTerm);
@@ -33,13 +34,18 @@ function TransactionList({ transactions, categories, wallets }: Props) {
       const matchesType =
         filters.type === "all" || transaction.type === filters.type;
 
-      const matchesCategory = transaction.transferId
-        ? filters.category === "all"
-        : filters.category === "all" ||
-          transaction.category?.id === filters.category;
+      const matchesCategory =
+        "category" in transaction
+          ? filters.category === "all" ||
+            transaction.category?.id === filters.category
+          : filters.category === "all";
 
       const matchesWallet =
-        filters.wallet === "all" || transaction.walletId === filters.wallet;
+        "walletId" in transaction
+          ? filters.wallet === "all" || transaction.walletId === filters.wallet
+          : filters.wallet === "all" ||
+            transaction.fromWallet.id === filters.wallet ||
+            transaction.toWallet.id === filters.wallet;
 
       return matchesSearch && matchesType && matchesCategory && matchesWallet;
     });

@@ -1,6 +1,6 @@
 import { Trash } from "lucide-react";
 import { Button } from "../ui/button";
-import { TransactionWithCategoryAndWallet } from "@/interface/transaction-interface";
+import { GroupedTransaction } from "@/interface/transaction-interface";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import clsx from "clsx";
@@ -8,7 +8,7 @@ import { Badge } from "../ui/badge";
 import { deleteTransaction } from "@/actions/transactions-actions";
 
 interface Props {
-  transaction: TransactionWithCategoryAndWallet & {
+  transaction: GroupedTransaction & {
     fromWallet?: { id: string; name: string };
     toWallet?: { id: string; name: string };
   };
@@ -41,7 +41,13 @@ function TransactionListItem({ transaction }: Props) {
           )}
 
           {!isTransfer ? (
-            <span className="font-medium">{transaction.category?.name}</span>
+            <span className="font-medium">
+              {"category" in transaction && (
+                <span className="font-medium">
+                  {transaction.category?.name}
+                </span>
+              )}
+            </span>
           ) : (
             <span className="font-medium">
               {transaction.fromWallet?.name} → {transaction.toWallet?.name}
@@ -53,7 +59,9 @@ function TransactionListItem({ transaction }: Props) {
 
         <span className="text-sm text-muted-foreground">
           {format(new Date(transaction.date), "d MMM yyyy", { locale: es })}
-          {transaction.wallet?.name && ` • ${transaction.wallet?.name}`}
+          {"wallet" in transaction && transaction.wallet?.name && (
+            <> • {transaction.wallet.name}</>
+          )}
         </span>
       </div>
 
