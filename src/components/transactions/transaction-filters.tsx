@@ -62,9 +62,9 @@ function TransactionFilters({ filters, categories, wallets, onChange }: Props) {
     filters.wallet !== "all";
 
   return (
-    <div className="flex gap-2 justify-between">
-      <div className="flex gap-2 items-center">
-        <div className="relative">
+    <div className="flex">
+      <div className="flex flex-col sm:flex-row gap-2 w-full">
+        <div className="relative col-span-4">
           <Search className="absolute w-4 h-4 transform left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-8"
@@ -73,80 +73,82 @@ function TransactionFilters({ filters, categories, wallets, onChange }: Props) {
             placeholder="Buscar transacciones..."
           />
         </div>
-        <Select
-          defaultValue="all"
-          value={filters.type}
-          onValueChange={(value) => {
-            if (
-              value === "income" ||
-              value === "expense" ||
-              value === "all" ||
-              value === "transfer"
-            ) {
-              onChange({ ...filters, type: value });
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Tipo</SelectLabel>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="income">Ingreso</SelectItem>
-              <SelectItem value="expense">Gasto</SelectItem>
-              <SelectItem value="transfer">Transferencia</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select
-          defaultValue="all"
-          value={filters.category}
-          onValueChange={(value) => onChange({ ...filters, category: value })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Catergorias</SelectLabel>
-              <SelectItem value="all">Todas</SelectItem>
-              {filteredCategory.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select
-          defaultValue="all"
-          value={filters.wallet}
-          onValueChange={(value) => onChange({ ...filters, wallet: value })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Billeteras" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Billeteras</SelectLabel>
-              <SelectItem value="all">Todas</SelectItem>
-              {wallets.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select
+            defaultValue="all"
+            value={filters.type}
+            onValueChange={(value) => {
+              if (
+                value === "income" ||
+                value === "expense" ||
+                value === "all" ||
+                value === "transfer"
+              ) {
+                onChange({ ...filters, type: value });
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Tipo</SelectLabel>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="income">Ingreso</SelectItem>
+                <SelectItem value="expense">Gasto</SelectItem>
+                <SelectItem value="transfer">Transferencia</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select
+            defaultValue="all"
+            value={filters.category}
+            onValueChange={(value) => onChange({ ...filters, category: value })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Catergorias</SelectLabel>
+                <SelectItem value="all">Todas</SelectItem>
+                {filteredCategory.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select
+            defaultValue="all"
+            value={filters.wallet}
+            onValueChange={(value) => onChange({ ...filters, wallet: value })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Billeteras" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Billeteras</SelectLabel>
+                <SelectItem value="all">Todas</SelectItem>
+                {wallets.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        {hasActiveFilters && (
+          <Button variant="secondary" onClick={resetFilters}>
+            <CircleX />
+            Limpiar Filtros
+          </Button>
+        )}
       </div>
-      {hasActiveFilters && (
-        <Button variant="secondary" onClick={resetFilters}>
-          <CircleX />
-          Limpiar Filtros
-        </Button>
-      )}
     </div>
   );
 }
