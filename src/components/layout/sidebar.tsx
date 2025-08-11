@@ -18,7 +18,6 @@ import ButtonLogout from "../auth/button-logout";
 const ROUTES = [
   { path: "/", pathname: "Transacciones" },
   { path: "/billeteras", pathname: "Billeteras" },
-  { path: "/configuracion", pathname: "Configuracion" },
 ];
 
 function Sidebar() {
