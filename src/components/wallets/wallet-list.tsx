@@ -24,6 +24,10 @@ function WalletList({ wallets, onEdit }: Props) {
     (wallet) => selectValue === "all" || wallet.type === selectValue
   );
 
+  const noWallets = wallets.length === 0;
+
+  const noResults = !noWallets && filteredWallets.length === 0;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -54,13 +58,27 @@ function WalletList({ wallets, onEdit }: Props) {
         </Select>
       </div>
       <div className="space-y-2">
-        {filteredWallets.map((wallet) => (
-          <WalletItem
-            key={wallet.id}
-            wallet={wallet}
-            onEdit={() => onEdit(wallet)}
-          />
-        ))}
+        {noWallets && (
+          <div className="flex justify-center mt-20 font-medium text-lg">
+            No hay billeteras registradas
+          </div>
+        )}
+
+        {noResults && (
+          <div className="flex justify-center mt-20 font-medium text-lg">
+            No hay resultados que coincidan con los filtros aplicados
+          </div>
+        )}
+
+        {!noWallets &&
+          !noResults &&
+          filteredWallets.map((wallet) => (
+            <WalletItem
+              key={wallet.id}
+              wallet={wallet}
+              onEdit={() => onEdit(wallet)}
+            />
+          ))}
       </div>
     </div>
   );
