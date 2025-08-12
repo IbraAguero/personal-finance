@@ -9,12 +9,10 @@ import {
 } from "@/schemas/transaction-schema";
 import { revalidatePath } from "next/cache";
 
-export const getAllTransactions = async () => {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "no autorizado", data: [] };
-
+export const getAllTransactions = async (userId: string) => {
+  "use cache";
   const transactions = await db.transaction.findMany({
-    where: { userId: session.user.id },
+    where: { userId },
     include: { category: true, wallet: true },
     orderBy: [{ date: "desc" }, { createdAt: "desc" }],
   });

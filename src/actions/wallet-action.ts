@@ -5,16 +5,11 @@ import { db } from "@/lib/db";
 import { WalletFormData, walletSchema } from "@/schemas/wallet-schema";
 import { revalidatePath } from "next/cache";
 
-export const getWallets = async () => {
+export const getWallets = async (userId: string) => {
+  "use cache";
   try {
-    const session = await auth();
-
-    if (!session || !session.user || !session.user.id) {
-      return { error: "no autorizado", success: false, data: [] };
-    }
-
     const wallets = await db.wallet.findMany({
-      where: { userId: session.user.id },
+      where: { userId },
     });
 
     const walletsWithBalance = await Promise.all(

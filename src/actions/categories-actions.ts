@@ -5,16 +5,11 @@ import { db } from "@/lib/db";
 import { CategoryFormData, categorySchema } from "@/schemas/category-schema";
 import { revalidatePath } from "next/cache";
 
-export const getCategories = async () => {
+export const getCategories = async (userId: string) => {
+  "use cache";
   try {
-    const session = await auth();
-
-    if (!session || !session.user || !session.user.id) {
-      return { error: "no autorizado", expense: [], income: [] };
-    }
-
     const categories = await db.category.findMany({
-      where: { userId: session.user.id },
+      where: { userId },
       orderBy: { createdAt: "asc" },
     });
     const expense = categories.filter((cat) => cat.type === "expense");
